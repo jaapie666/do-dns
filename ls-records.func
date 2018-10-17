@@ -1,0 +1,17 @@
+ls-records()
+{ 
+  if [ -z "$1" ]
+  then
+    echo No domain given
+  else
+    curl -s -X GET \
+         -H "Content-Type: application/json" \
+         -H "Authorization: Bearer $TOKEN" \
+            "https://api.digitalocean.com/v2/domains/$1/records" > /tmp/dorecordslist
+    
+    echo -e "\n             Domain Records for $1:"
+    echo --
+    cat /tmp/dorecordslist | json_reformat | grep -C 1 --context=1 name | sed s'/[",]/ /g' | sed s'/ :  /: /'
+    rm /tmp/dorecordslist
+  fi
+}
